@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Socket.IO chat</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			overflow-y: auto;
+			/* overflow: hidden; */
+			font-family: -apple-system, BlinkMacSystemFont, "Avenir", Roboto, Helvetica, Arial, sans-serif;
+			background-color: #E5F4E1;
+		}
+
+		#form {
+			background: rgba(255, 255, 255, 0);
+			margin-right: 0.5rem;
+			padding: 0.25rem;
+			padding-top: 0rem;
+			display: flex;
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 3rem;
+			box-sizing: border-box;
+		}
+
+		.sendButton {
+			background-color: #00C200;
+			color: white;
+			border: none;
+			margin: 20px;
+			margin-top: 0;
+			padding: 8px 12px;
+			font-size: 16px;
+			border-radius: 5px;
+			cursor: pointer;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transition: background-color 0.3s ease;
+		}
+
+		.sendButton:hover {
+			background-color: #28A428;
+		}
+
+		.topic {
+			font-size: 20px;
+			margin-left: 20px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+			font-family: "Avenir";
+		}
+
+		.note-label {
+			margin-left: 20px;
+			margin-bottom: 10px;
+			padding-top: 10px;
+			font-style: italic;
+			font-family: "Avenir";
+		}
+
+		.font {
+			font-family: "Avenir";
+		}
+
+		#toolbar {
+			display: flex;
+			gap: 5px;
+			margin: 20px;
+			margin-top: 10px;
+		}
+
+		#toolbar button {
+			margin: 0;
+			padding: 5px;
+		}
+
+		#userInput {
+			margin-top: 5px;
+			margin: 20px;
+			margin-bottom: 10px;
+			height: calc(100vh - 400px);
+			border: 2px solid #ccc;
+			padding: 10px;
+			overflow-y: auto;
+			white-space: pre-wrap;
+			background-color: #ffffff;
+		}
+
+		#userInput:focus {
+			border: 2px solid #000;
+		}
+
+		.other-message {
+			background-color: #f1f0f0;
+			color: #333;
+			text-align: left;
+		}
+
+		#name, #email {
+			margin: 10px 20px;
+			padding: 10px;
+			font-size: 16px;
+			width: 60%;
+			box-sizing: border-box;
+			border: 2px solid #ccc;
+			border-radius: 5px;
+		}
+
+		#name:focus, #email:focus {
+			border-color: #000;
+		}
+
+		@keyframes popIn {
+			0% {
+				transform: scale(0.8);
+				opacity: 0;
+			}
+
+			70% {
+				transform: scale(1.3);
+				opacity: 1;
+			}
+
+			100% {
+				transform: scale(1);
+				opacity: 1;
+			}
+		}
+	</style>
+	<script defer>
+		function formatText(command) {
+			document.execCommand(command, false, null);
+		}
+
+		function changeFont(fontName) {
+			setTimeout(() => {
+				document.execCommand("fontName", false, fontName);
+			}, 0);
+		}
+
+		function changeFontSize(size) {
+			document.execCommand("fontSize", false, "7");
+			const spans = document.querySelectorAll("#userInput font[size='7']");
+			spans.forEach(span => {
+				span.removeAttribute("size");
+				span.style.fontSize = size;
+			});
+		}
+
+		function addBullet() {
+			document.execCommand("insertUnorderedList", false, null);
+		}
+
+		function addNumberedList() {
+			document.execCommand("insertOrderedList", false, null);
+		}
+
+		function sanitizeInput(input) {
+			const div = document.createElement('div');
+			div.innerHTML = input;
+			return div.textContent || div.innerText || '';
+		}
+
+		function sendNote() {
+			const name = document.getElementById("name").value;
+    		const email = document.getElementById("email").value;
+    		const userInput = sanitizeInput(document.getElementById("userInput").innerHTML);
+
+    		const nameErrorDiv = document.getElementById("name-error");
+    		const emailErrorDiv = document.getElementById("email-error");
+    		const userInputErrorDiv = document.getElementById("userInput-error");
+
+    		let isValid = true;
+
+    		// Reset error messages
+    		nameErrorDiv.style.display = "none";
+    		emailErrorDiv.style.display = "none";
+    		userInputErrorDiv.style.display = "none";
+
+    		// Validate name
+    		if (!name) {
+    		    nameErrorDiv.innerText = "Name is required.";
+    		    nameErrorDiv.style.display = "block";
+    		    isValid = false;
+    		}
+		
+    		// Validate email
+    		if (!email) {
+    		    emailErrorDiv.innerText = "Email is required.";
+    		    emailErrorDiv.style.display = "block";
+    		    isValid = false;
+    		}
+		
+    		// Validate user input length
+    		if (userInput.length < 50) {
+    		    userInputErrorDiv.innerText = "Input must be at least 50 characters.";
+    		    userInputErrorDiv.style.display = "block";
+    		    isValid = false;
+    		}
+		
+    		if (!isValid) {
+    		    return;
+    		}
+
+			// Generate or retrieve sessionId
+			let sessionId = localStorage.getItem("sessionId");
+			if (!sessionId) {
+				sessionId = `session_${Math.random().toString(36).substr(2, 9)}`;
+				localStorage.setItem("sessionId", sessionId);
+			}
+
+			// Send data to server
+			fetch('/save-data', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					sessionId: sessionId,
+					user_name: name,
+					email: email,
+					task: "task2_prompt",
+					pre_task_notes: userInput
+				})
+			})
+			.then(response => {
+				if (response.ok) {
+					// alert("Data saved successfully");
+					window.location.href = "?mode=task2_prompt"; // Redirect if needed
+				} else {
+					alert("Fail");
+					console.error("Failed to save data");
+				}
+			})
+			.catch(error => console.error("Error:", error));
+		}
+	</script>
+</head>
+
+<body>
+	<div>
+		<label class="note-label">Name</label>
+		<input type="name" id="name" placeholder="Enter your name" />
+		<div id="name-error" style="color: red; display: none; margin: 0px 20px;"></div>
+	</div>
+	
+	<div>
+		<label class="note-label">E-mail</label>
+		<input type="email" id="email" placeholder="Enter your email" />
+		<div id="email-error" style="color: red; display: none; margin: 0px 20px;"></div>
+	</div>
+
+	<div id="instruction" class="topic">
+		<strong>Topic:</strong> The impact of AI on the job market and the changing nature of work
+	</div>
+	<div>
+
+		<label for="userInput" class="note-label">Write here what you already know about this topic in 2-5 sentences</label>
+		<div id="toolbar">
+			<select id="fontSelect" class="font" onchange="changeFont(this.value)">
+				<option value="Arial">Arial</option>
+				<option value="Calibri">Calibri</option>
+				<option value="Georgia">Georgia</option>
+				<option value="Times New Roman">Times New Roman</option>
+				<option value="Verdana">Verdana</option>
+			</select>
+			<button onclick="formatText('bold')"><b>B</b></button>
+			<button onclick="formatText('italic')"><i>I</i></button>
+			<button onclick="formatText('underline')"><u>U</u></button>
+			<select id="fontSizeSelect" class="font" onchange="changeFontSize(this.value)">
+				<option value="">16</option>
+				<option value="8px">8</option>
+				<option value="9px">9</option>
+				<option value="10px">10</option>
+				<option value="11px">11</option>
+				<option value="12px">12</option>
+				<option value="14px">14</option>
+				<option value="16px">16</option>
+				<option value="18px">18</option>
+				<option value="24px">24</option>
+				<option value="30px">30</option>
+				<option value="36px">36</option>
+				<option value="48px">48</option>
+				<option value="60px">60</option>
+				<option value="72px">72</option>
+				<option value="96px">96</option>
+			</select>
+			<button onclick="addBullet()">•</button>
+			<button onclick="addNumberedList()">123</button>
+		</div>
+		<div id="userInput" placeholder="Enter at least 50 characters" contenteditable="true" style="border: 1.5px solid #aaa; padding: 0.5rem;"></div>
+		<div id="userInput-error" style="color: red; display: none; margin: 0px 20px;"></div>
+		<div style="text-align: right;">
+			<button type="button" class="sendButton" onclick="sendNote()">Next</button>
+		</div>
+
+	</div>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		const socket = io();
+
+		const form = document.getElementById('form');
+		const input = document.getElementById('input');
+		const messages = document.getElementById('messages');
+
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			if (input.value) {
+				socket.emit('chat message', input.value, true);
+				input.value = '';
+			}
+		});
+
+		socket.on('chat message', (msg, n) => {
+			const messageContainer = document.createElement('div');
+			messageContainer.className = 'message-container';
+
+			messageContainer.classList.add('user-message');
+		});
+	</script>
+</body>
+
+</html>

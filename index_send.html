@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>Socket.IO chat</title>
+		<style>
+			body { 
+				margin: 0; 
+				padding-bottom: 3rem; 
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+			}
+
+			#form { 
+				background: rgba(0, 0, 0, 0.15); 
+				padding: 0.25rem; 
+				display: flex;
+				position: fixed;
+				bottom: 0; 
+				left: 0; 								 
+				right: 0; 
+				height: 3rem; 								 
+				box-sizing: border-box; 
+				backdrop-filter: blur(10px); 
+			}
+
+			#input { 
+				border: none; 
+				padding: 0 1rem; 
+				flex-grow: 1; 
+				border-radius: 2rem;
+				margin: 0.25rem;
+			}
+
+			#input:focus { 	            
+				outline: none; 
+			}
+
+			#form > button { 
+				background: #333; 
+				border: none;
+				padding: 0 1rem; 			
+				margin: 0.25rem; 
+				border-radius: 3px; 							 
+				outline: none; 
+				color: #fff;
+			}
+
+			#messages {
+				list-style-type: none;
+				margin: 1rem 0;
+				padding: 0;
+				height: 0px;
+				overflow-y: auto; /* Enable scrolling */
+			}
+
+			#messages > li {
+				padding: 0.5rem 1rem;
+			}
+
+			#messages > li:nth-child(odd) { 
+				background: #efefef;
+				word-wrap: break-word;
+				white-space: pre-wrap; /* Preserve whitespace and wrap text */
+			}
+			.note-label {
+				margin-left: 0.5rem;
+			}
+
+			#userInput {
+				width: calc(100% - 1rem); /* The input box will adjust its width according to the screen size */
+				height: 0px;
+				overflow-y: auto; /* Enables vertical scrollbar when content exceeds height */
+				resize: none; /* Allows the user to resize the box vertically */
+				padding: 0.5rem; /* Adds padding for better text spacing.*/
+				margin-right: 0.5rem;
+				margin-left: 0.5rem;							 
+				box-sizing: border-box; /* Ensures padding is included in width/height calculation */
+				word-wrap: break-word; /* Ensures long words wrap to the next line */
+				white-space: pre-wrap; /* Preserves white spaces and wraps text */
+				max-width: 100%; /* Prevents the box from exceeding screen width */
+				max-height: 300px; /* Sets a max height for scrolling */
+				text-align: left;  /* Aligns text to the left */
+				vertical-align: top;  /* Aligns the text to start at the top */
+			}
+		
+			/* Styles for new buttons */
+			.number-buttons {
+				display: flex;
+				/*justify-content: space-around;
+				margin: 1rem;*/
+				flex-direction: column; /* Stack buttons vertically */
+				padding: 1rem;
+			}
+
+			.number-buttons button {
+				background: #333;
+				color: white;
+				border: none;
+				padding: 0.5rem 1rem;						         
+				border-radius: 5px;
+				cursor: pointer;
+				margin-bottom: 0.5rem; /* Add spacing between buttons */
+				padding: 0.5rem 1rem;
+				font-size: 1rem;
+			}
+
+			/* Styles for new buttons */
+			.number-buttons-light {
+				display: flex;
+				/*justify-content: space-around;
+				margin: 1rem;*/
+				flex-direction: column; /* Stack buttons vertically */
+				padding: 1rem;
+			}
+
+			.number-buttons-light button {
+				background: #BBB;
+				color: #333;
+				border: none;
+				padding: 0.5rem 1rem;						         
+				border-radius: 5px;
+				cursor: pointer;
+				margin-bottom: 0.5rem; /* Add spacing between buttons */
+				padding: 0.5rem 1rem;
+				font-size: 1rem;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div>
+			<label for="number-buttons" class="note-label">Beginning of the task:</label>
+			<div class="number-buttons">
+				<button onclick="sendPrompt(this, 1)"><em>Before you begin the task</em><br><br>Think aloud the qualities you will look for in Perplexity’s answer.</button>
+				<button onclick="sendPrompt(this, 1)"><em>Let’s begin the task!</em><br><br>First, add some headings and subheadings to structure your notes. You can refine these later as you work on the task.</button>
+		</div>
+		<label for="number-buttons" class="note-label">During the task:</label>
+		<div class="number-buttons-light">
+			<button onclick="sendPrompt(this, 2)"><em>Think about Perplexity's response as you read it.</em><br><br>Think aloud: How closely does the response align with what you expected? Did you find anything unexpected?</button>
+			<button onclick="sendPrompt(this, 2)"><em>Once again, reflect on Perplexity's response as you read it.</em><br><br>Think aloud: Does the response match what you expected? Did you notice anything surprising?</button>
+			<button onclick="sendPrompt(this, 2)"><em>One more time, think about Perplexity's response as you read it.</em><br><br>Think aloud: How similar is the response to what you thought it would be? Was there anything you did not expect?</button>
+		</div>
+		<div class="number-buttons">
+			<button onclick="sendPrompt(this, 2)"><em>Let’s check your understanding</em><br><br>Pause and think aloud: Is there anything in your notes that you do not fully understand? If yes, explore the sources included in Perplexity’s response or ask additional questions in Perplexity.</button>
+			<button onclick="sendPrompt(this, 2)"><em>Let’s check your understanding once again</em><br><br>Pause and think aloud: Do your notes contain anything you don’t completely understand? If so, review the sources provided in Perplexity’s response or ask more questions in Perplexity to clarify.</button>
+			<button onclick="sendPrompt(this, 2)"><em>Let’s check your understanding one more time</em><br><br>Pause and think aloud: Is there anything in your notes that still feels unclear? If yes, you can explore the sources shared in Perplexity’s response or ask Perplexity more questions to get additional help.</button>
+		</div>
+		<label for="number-buttons" class="note-label">At the end of the task:</label>
+		<div class="number-buttons">
+			<button onclick="sendPrompt(this, 3)"><em>As you wrap up the task</em><br><br>Below your notes, write a summary of the main points you have learned about this topic with the heading "Summary."</button>
+		</div>
+
+		<form id="form" action="">							
+			<input id="input" autocomplete="off" /><button>Send</button>
+		</form>
+	</div>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		const socket = io();
+		const form = document.getElementById('form');
+		const input = document.getElementById('input');
+		const messages = document.getElementById('messages');
+
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			if (input.value) {
+				socket.emit('chat message', input.value, true);
+				input.value = '';						
+			}
+		});
+
+		function sendPrompt(txt, n) {
+			const buttonText = txt.innerHTML;
+			socket.emit('chat message', buttonText.trim(), n);
+		}
+
+		socket.on('chat message', (msg, isUserMessage) => {
+			const item = document.createElement('li');
+			item.textContent = msg.text;
+			// item.innerHTML = msg;
+
+			const isOwnMessage = (isUserMessage && socket.id === msg.senderId);
+			if (isOwnMessage) {								
+				item.style.textAlign = 'right';
+			} else {
+				item.style.textAlign = 'left';
+			 }
+
+			messages.appendChild(item);
+			window.scrollTo(0, document.body.scrollHeight);
+		});
+	</script>
+	</body>
+</html>
