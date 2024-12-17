@@ -86,8 +86,6 @@
 			/* Styles for new buttons */
 			.number-buttons {
 				display: flex;
-				/*justify-content: space-around;
-				margin: 1rem;*/
 				flex-direction: column; /* Stack buttons vertically */
 				padding: 1rem;
 			}
@@ -107,8 +105,6 @@
 			/* Styles for new buttons */
 			.number-buttons-light {
 				display: flex;
-				/*justify-content: space-around;
-				margin: 1rem;*/
 				flex-direction: column; /* Stack buttons vertically */
 				padding: 1rem;
 			}
@@ -178,7 +174,6 @@
 		socket.on('chat message', (msg, isUserMessage) => {
 			const item = document.createElement('li');
 			item.textContent = msg.text;
-			// item.innerHTML = msg;
 
 			const isOwnMessage = (isUserMessage && socket.id === msg.senderId);
 			if (isOwnMessage) {								

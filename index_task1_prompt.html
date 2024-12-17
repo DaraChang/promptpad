@@ -8,122 +8,30 @@
 		body {
 			margin: 0;
 			padding: 0;
-			/* overflow: hidden; */
 			overflow-y: auto;
-			/* Enable scrolling */
 			font-family: -apple-system, BlinkMacSystemFont, "Avenir", Roboto, Helvetica, Arial, sans-serif;
 			background-color: #E5F4E1;
 		}
 
-		#form {
-			background: rgba(255, 255, 255, 0);
-			margin-right: 5px;
-			padding: 2.5px;
-			padding-top: 0px;
-			display: flex;
-			position: fixed;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			height: 20px;
-			box-sizing: border-box;
-		}
-
+		/*css style for prompt container*/
 		#messagesContainer {
-			border: 2px solid #666;
 			/* Border color */
-			border-radius: 8px;
+			border: 2px solid #666;
 			/* Rounded corners */
-			padding: 5px;
+			border-radius: 8px;
 			/* Space between border and messages */
+			padding: 5px;
 			margin: 10px 20px;
 			margin-bottom: 30px;
-			/* Space around the container */
 			height: 180px;
-			overflow-y: auto;
 			/* Enable scrolling */
-			background-color: #666;
+			overflow-y: auto;
 			/* Background color */
+			background-color: #666;
 			box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-			/* Shadow for depth */
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-		}
-
-		.sendButton {
-			background-color: #00C200;
-			color: white;
-			border: none;
-			margin: 0px 20px;
-			padding: 8px 12px;
-			font-size: 16px;
-			border-radius: 5px;
-			cursor: pointer;
-			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-			transition: background-color 0.3s ease;
-		}
-
-		.sendButton:hover {
-			background-color: #28A428;
-		}
-
-		#messages {
-			list-style-type: none;
-			margin: 0;
-			padding-left: 10px;
-			padding-right: 10px;
-			max-height: 180px;
-			/* height: 100px; */
-			/* Set a height for the chat area */
-			overflow-y: auto;
-			/* Enable scrolling */
-		}
-
-		.message-container.user-message {
-			justify-content: flex-start;
-			/* Align user messages to the right */
-			column-gap: 10px;
-		}
-
-		.avatar {
-			width: 36px;
-			height: 36px;
-			border-radius: 50%;
-			/* Make the image circular */
-			background-color: #d9d9d9;
-			display: flex;
-			/* To center the image */
-			justify-content: center;
-			/* Centering */
-			align-items: center;
-			/* Centering */
-			padding: 5px;
-		}
-
-		.user-message .avatar {
-			margin-right: 0;
-			margin: 10px 0;
-			/* Adjust margin for user messages */
-		}
-
-		#messages>li {
-			/*display: block;*/
-			display: inline-block;
-			max-width: 80%;
-			/* Limit width of chat bubbles */
-			width: fit-content;
-			/* Adjusts width based on message length */
-			padding: 7.5px 10px;
-			margin: 0;
-			border-radius: 15px;
-			background-color: #E5EDFF;
-			color: #000000;
-			overflow-wrap: break-word;
-			/* Allow long messages to wrap */
-			white-space: pre-wrap;
-			/* Preserve whitespace and wrap text */
-			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 		}
 
 		.message-container {
@@ -132,91 +40,60 @@
 			margin: 0 0;
 		}
 
+		.message-container.user-message {
+			justify-content: flex-start;
+			/* Align user messages to the right */
+			column-gap: 10px;
+		}
+
+		/*css style for prompt*/
+		#messages {
+			list-style-type: none;
+			margin: 0;
+			padding-left: 10px;
+			padding-right: 10px;
+			/* Set a height for the chat area */
+			max-height: 180px;
+			/* Enable scrolling */
+			overflow-y: auto;
+		}
+
 		.message-text {
 			display: block;
-			max-width: 80%;
 			/* Limit width of chat bubbles */
-			width: fit-content;
+			max-width: 80%;
 			/* Adjusts width based on message length */
+			width: fit-content;
 			padding: 7.5px 10px;
 			margin: 10px 0;
 			border-radius: 15px;
 			background-color: #E5EDFF;
 			color: #000000;
-			overflow-wrap: break-word;
 			/* Allow long messages to wrap */
-			white-space: pre-wrap;
+			overflow-wrap: break-word;
 			/* Preserve whitespace and wrap text */
+			white-space: pre-wrap;
 			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 			animation: popIn 0.4s ease forwards;
 		}
 
-		.scrollable-container {
-			height: calc(100vh - 200px);
-			overflow-y: auto;
-			/*border: 1px solid #ccc;*/
-			padding: 10px;
-			margin: 0 auto;
-		}
-
-		.prompt_note {
-			margin-left: 20px;
-			margin-bottom: 10px;
-			padding-top: 10px;
-			font-family: "Avenir";
-			color: #00008B;
-		}
-
-		.topic {
-			font-size: 20px;
-			margin-left: 20px;
-			margin-top: 10px;
-			font-family: "Avenir";
-		}
-
-		.note-label {
-			margin-left: 20px;
-			margin-bottom: 10px;
-			margin-top: 20px;
-			padding-top: 20px;
-			font-style: italic;
-			font-family: "Avenir";
-		}
-
-		.font {
-			font-family: "Avenir";
-		}
-
-		#toolbar {
+		.avatar {
+			width: 36px;
+			height: 36px;
+			/* Make the image circular */
+			border-radius: 50%;
+			background-color: #d9d9d9;
+			/* To center the image */
 			display: flex;
-			gap: 5px;
-			margin-left: 20px;
-			margin-top: 10px;
-		}
-
-		#toolbar button {
-			margin: 0;
+			justify-content: center;
+			align-items: center;
 			padding: 5px;
 		}
 
-		#userInput {
-			margin: 20px 20px;
-			height: calc(100vh - 440px);
-			border: 2px solid #ccc;
-			padding: 10px;
-			overflow-y: auto;
-			white-space: pre-wrap;
-			background-color: #ffffff;
-		}
-
-		#userInput:focus {
-			border: 2px solid #000;
-		}
-
-		.other-message {
-			background-color: #f1f0f0;
-			color: #333;
-			text-align: left;
+		.user-message .avatar {
+			/* Adjust margin for user messages */
+			margin-right: 0;
+			margin: 10px 0;
 		}
 
 		@keyframes popIn {
@@ -236,6 +113,82 @@
 			}
 		}
 
+		/*css style for topic*/
+		.topic {
+			font-size: 20px;
+			margin-left: 20px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+			font-family: "Avenir";
+		}
+
+		/*css style for instruction above the prompt container*/
+		.prompt_note {
+			margin-left: 20px;
+			margin-bottom: 10px;
+			padding-top: 10px;
+			font-family: "Avenir";
+			color: #00008B;
+		}
+
+		/*css style for instruction above the note taking container*/
+		.note-label {
+			margin-left: 20px;
+			margin-bottom: 10px;
+			padding-top: 20px;
+			font-style: italic;
+			font-family: "Avenir";
+		}
+
+		#toolbar {
+			display: flex;
+			gap: 5px;
+			margin-left: 20px;
+			margin-top: 10px;
+		}
+
+		#toolbar button {
+			margin: 0;
+			padding: 5px;
+		}
+
+		.font {
+			font-family: "Avenir";
+		}
+
+		#userInput {
+			margin: 20px 20px;
+			height: calc(100vh - 440px);
+			border: 2px solid #ccc;
+			padding: 10px;
+			overflow-y: auto;
+			white-space: pre-wrap;
+			background-color: #ffffff;
+		}
+
+		#userInput:focus {
+			border: 2px solid #000;
+		}
+
+		/*css style for submit button*/
+		.sendButton {
+			background-color: #00C200;
+			color: white;
+			border: none;
+			margin: 0px 20px;
+			padding: 8px 12px;
+			font-size: 16px;
+			border-radius: 5px;
+			cursor: pointer;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transition: background-color 0.3s ease;
+		}
+
+		.sendButton:hover {
+			background-color: #28A428;
+		}
+
+		/*css style for sound notification*/
 		.modal {
 			display: none;
 			position: fixed;
@@ -296,18 +249,22 @@
 		.modal button:focus {
 			outline: none;
 		}
+
 	</style>
 	<script defer>
+		// Formats text (bold, italic, underline) in the contenteditable div
 		function formatText(command) {
 			document.execCommand(command, false, null);
 		}
 
+		// Changes the font of the selected text in the contenteditable div
 		function changeFont(fontName) {
 			setTimeout(() => {
 				document.execCommand("fontName", false, fontName);
 			}, 0);
 		}
 
+		// Changes the font size of the selected text in the contenteditable div
 		function changeFontSize(size) {
 			document.execCommand("fontSize", false, "7"); const spans = document.querySelectorAll("#userInput font[size='7']");
 			spans.forEach(span => {
@@ -316,28 +273,47 @@
 			});
 		}
 
+		// Adds a bullet point list to the contenteditable div
 		function addBullet() {
 			document.execCommand("insertUnorderedList", false, null);
 		}
 
+		// Adds a numbered list to the contenteditable div
 		function addNumberedList() {
 			document.execCommand("insertOrderedList", false, null);
 		}
 
-		function sanitizeInput(input) {
-			const div = document.createElement('div');
-			div.innerHTML = input;
-			return div.textContent || div.innerText || '';
+		// Handles the paste event to insert plain text only
+		function handlePaste(event) {
+			// Prevent the default paste behavior
+			event.preventDefault();
+
+			// Get plain text from the clipboard
+			const clipboardData = (event.clipboardData || window.clipboardData);
+			const plainText = clipboardData.getData('text/plain');
+
+			// Insert the plain text at the current cursor position
+			insertTextAtCursor(plainText);
 		}
 
+		// Inserts text at the current cursor position
+		function insertTextAtCursor(text) {
+			const selection = window.getSelection();
+			if (!selection.rangeCount) return;
+
+			const range = selection.getRangeAt(0);
+			range.deleteContents(); // Remove selected content (if any)
+			range.insertNode(document.createTextNode(text)); // Insert plain text
+		}
+
+		// Handles the submit button click event
 		function sendNote() {
-			const userInputDiv = document.getElementById("userInput");
-			const userInput = sanitizeInput(userInputDiv.innerHTML);
+			const userInput = document.getElementById("userInput").innerHTML;
 			const errorDiv = document.getElementById("error-message"); // Error message container
 			console.log("User Input:", userInput);
 
+			// Validate input length
 			if (userInput.length < 50) {
-				// Show error message if input is below 50 characters
 				errorDiv.innerText = "Input must be at least 50 characters.";
 				errorDiv.style.display = "block";
 				return; // Prevent form submission
@@ -345,22 +321,40 @@
 				errorDiv.style.display = "none"; // Hide error message if valid
 			}
 
+			// Get current timestamp and user details from localStorage
+			const timeStamp = new Date().toLocaleString();
+			name = localStorage.getItem("user_name");
+			email = localStorage.getItem("email");
+
 			// Temporarily save the content to LocalStorage
 			localStorage.setItem("userInput", userInput);
+			if (!localStorage.getItem("attempt")) {
+				localStorage.setItem("attempt", "0"); // Initialize attempt count
+			}
+			let attempt = parseInt(localStorage.getItem("attempt")); // Convert to number
 
-			fetch('/save-data2', {
+			// Increment attempt count and update in localStorage
+			attempt += 1;
+			localStorage.setItem("attempt", attempt.toString());
+
+			// Send data to the server
+			fetch('/save-data', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
-					sessionId: localStorage.getItem("sessionId"),
-					full_notes: userInput
+					time_stamp: timeStamp,
+					user_name: name,
+					email: email,
+					task: "task1_prompt",
+					attempt: attempt,
+					notes: userInput
 				})
 			})
 			.then(response => {
 				if (response.ok) {
 					alert("Data saved successfully");
-					// window.location.href = "?mode=task1_prompt"; // Redirect if needed
 				} else {
+					alert("Fail");
 					console.error("Failed to save data");
 				}
 			})
@@ -370,6 +364,7 @@
 </head>
 
 <body>
+	<!-- Modal for enabling sound notifications -->
 	<div id="soundModal" class="modal">
 		<div class="modal-content">
 		  <h2>Enable Sound Notifications</h2>
@@ -377,6 +372,7 @@
 		  <button id="enableSoundButton">Confirm</button>
 		</div>
 	</div>
+
 	<div class="topic">
 		<strong>Topic:</strong> How are advances AI impacting education?
 	</div>
@@ -384,66 +380,71 @@
 	<div id="instruction" class="prompt_note">
 		<strong>Reflect and Engage</strong>
 	</div>
+
 	<div>
-		<!-- <label for="messages" class="note-label">Prompt:</label> -->
+		<!-- Chat area for displaying messages -->
 		<div id="messagesContainer">
 			<ul id="messages"></ul>
 			<form id="form" action""></form>
 		</div>
 
-		<!-- <div class="scrollable-container"> -->
-			<div>
-				<label for="userInput" class="note-label">Write your notes here</label>
-				<div id="toolbar">
-					<select id="fontSelect" class="font" onchange="changeFont(this.value)">
-						<option value="Arial">Arial</option>
-						<option value="Calibri">Calibri</option>
-						<option value="Georgia">Georgia</option>
-						<option value="Times New Roman">Times New Roman</option>
-						<option value="Verdana">Verdana</option>
-					</select>
-					<button onclick="formatText('bold')"><b>B</b></button>
-					<button onclick="formatText('italic')"><i>I</i></button> <button
-						onclick="formatText('underline')"><u>U</u></button> <select id="fontSizeSelect" class="font"
-						onchange="changeFontSize(this.value)">
-						<option value="">16</option>
-						<option value="8px">8</option>
-						<option value="9px">9</option>
-						<option value="10px">10</option>
-						<option value="11px">11</option>
-						<option value="12px">12</option>
-						<option value="14px">14</option>
-						<option value="16px">16</option>
-						<option value="18px">18</option>
-						<option value="24px">24</option>
-						<option value="30px">30</option>
-						<option value="36px">36</option>
-						<option value="48px">48</option>
-						<option value="60px">60</option>
-						<option value="72px">72</option>
-						<option value="96px">96</option>
-					</select>
-					<button onclick="addBullet()">•</button>
-					<button onclick="addNumberedList()">123</button>
-				</div>
-				<div id="userInput" contenteditable="true" style="border: 1.5px solid #aaa; padding: 0.5rem;"></div>
-				<div id="error-message" style="color: red; display: none; margin: 0px 20px;"></div>
-				<div style="text-align: right;">
-					<button type="button" class="sendButton" onclick="sendNote()">Submit</button>
-				</div>
+		<!-- Toolbar and user input area -->
+		<div>
+			<label for="userInput" class="note-label">Write your notes here</label>
+			<div id="toolbar">
+				<select id="fontSelect" class="font" onchange="changeFont(this.value)">
+					<option value="Arial">Arial</option>
+					<option value="Calibri">Calibri</option>
+					<option value="Georgia">Georgia</option>
+					<option value="Times New Roman">Times New Roman</option>
+					<option value="Verdana">Verdana</option>
+				</select>
+				<button onclick="formatText('bold')"><b>B</b></button>
+				<button onclick="formatText('italic')"><i>I</i></button> <button
+					onclick="formatText('underline')"><u>U</u></button> <select id="fontSizeSelect" class="font"
+					onchange="changeFontSize(this.value)">
+					<option value="">16</option>
+					<option value="8px">8</option>
+					<option value="9px">9</option>
+					<option value="10px">10</option>
+					<option value="11px">11</option>
+					<option value="12px">12</option>
+					<option value="14px">14</option>
+					<option value="16px">16</option>
+					<option value="18px">18</option>
+					<option value="24px">24</option>
+					<option value="30px">30</option>
+					<option value="36px">36</option>
+					<option value="48px">48</option>
+					<option value="60px">60</option>
+					<option value="72px">72</option>
+					<option value="96px">96</option>
+				</select>
+				<button onclick="addBullet()">•</button>
+				<button onclick="addNumberedList()">123</button>
 			</div>
-		<!-- </div> -->
+			<div id="userInput" contenteditable="true" style="border: 1.5px solid #aaa; padding: 0.5rem;"></div>
+			<div id="error-message" style="color: red; display: none; margin: 0px 20px;"></div>
+			<div style="text-align: right;">
+				<button type="button" class="sendButton" onclick="sendNote()">Submit</button>
+			</div>
+		</div>
 	</div>
+
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
+		// Initializes event listeners after DOM content is loaded
 		window.addEventListener('DOMContentLoaded', () => {
+			const userInputDiv = document.getElementById("userInput");
+        	userInputDiv.addEventListener('paste', handlePaste); // Handle paste as plain text
+
+			// Display the modal for enabling sound notifications
 			const modal = document.getElementById("soundModal");
 			modal.style.display = "flex";
 
 			document.getElementById("enableSoundButton").addEventListener("click", () => {
 				enableSound = true;
 				modal.style.display = "none";
-				// alert("Sound notifications are enabled.");
 			});
 		});
 
@@ -483,10 +484,6 @@
 			
 			const messageContainer = document.createElement('div');
 			messageContainer.className = 'message-container';
-
-			// if (isUserMessage) {
-			//   messageContainer.classList.add('user-message');
-			// }
 			messageContainer.classList.add('user-message');
 
 			// Avatar image element
@@ -503,14 +500,8 @@
 
 			// Chat message bubble
 			const messageBubble = document.createElement('li');
-			// let formattedText = msg.replace(/(.*?)(<br>|$)/g, (match, p1, p2) => {
-			//   return `<em>${p1}</em>${p2}`;
-			// });
-
-			//messageBubble.innerHTML = formattedText;
 			messageBubble.innerHTML = msg.text;
 			messageBubble.className = 'message-text';
-			//messageBubble.className = isUserMessage ? 'user-message' : 'other-message';
 
 			// Append avatar and message bubble to container
 			messageContainer.appendChild(avatar);

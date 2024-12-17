@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+const path = require('path');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const { createServer } = require('node:http');
@@ -15,89 +16,59 @@ app.use(express.json());
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
-const transporter = nodemailer.createTransport({
-	service: 'Gmail',
-	auth: {
-		user: 'darachang980905@gmail.com',
-		pass: 'oset qiep dlmk imdn'
-	}
-});
-
-const readData = () => {
-	if (!fs.existsSync(filePath)) return {};
-	const rawData = fs.readFileSync(filePath);
-	return JSON.parse(rawData);
-};
-
-const writeData = (data) => {
-	fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-};
-
+// Endpoint to save user data
 app.post('/save-data', (req, res) => {
-	const { sessionId, user_name, email, task, pre_task_notes} = req.body;
+	const { time_stamp, user_name, email, task, attempt, notes} = req.body;
 
-	if (!sessionId || !user_name || !email || !pre_task_notes) {
+	// Validate required fields
+	if (!time_stamp || !user_name || !email || !task || !attempt || !notes) {
 		return res.status(400).send("Missing required fields");
 	}
 
-	const data = readData();
+	// Define the directory and file paths for saving user data
+	const userDir = path.join(__dirname, 'metacognitive_prompts_study_data', `${user_name}`);
+	const filePath = path.join(userDir, `${task}_${attempt}.json`);
 
-	data[sessionId] = {
-		user_name,
-		email,
-		task,
-		pre_task_notes
-	};
-
-	writeData(data);
-	res.status(200).send("Data saved successfully");
-});
-
-app.post("/save-data2", (req, res) => {
-	const { sessionId, full_notes } = req.body;
-  
-	if (!sessionId || !full_notes) {
-	  return res.status(400).send("Missing required fields");
-	}
-  
-	const data = readData();
-  
-	if (!data[sessionId]) {
-	  return res.status(404).send("User doesn't exist");
-	}
-  
-	data[sessionId].full_notes = full_notes;
-  
-	writeData(data);
-	res.status(200).send("Data saved successfully");
-  });
-
-app.post('/send-email', (req, res) => {
-	const { name, email, htmlContent } = req.body;
-	const mailOptions = {
-		from: 'darachang980905@gmail.com',
-		to: 'darachang980905@gmail.com',
-		subject: `Report from ${name}`,
-		name: name,
-		email: email,
-		html: `
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Message:</strong></p>
-            <div>${htmlContent}</div>`
-	};
-	transporter.sendMail(mailOptions, (error, info) => {
-		if (error) {
-			console.log('Error:', error);
-			return res.status(500).send('Error sending email.');
+	try {
+		if (!fs.existsSync(userDir)) {
+			// Create the directory if it doesn't exist
+			try {
+				fs.mkdirSync(userDir, { recursive: true }); // Create the directory (including any necessary parent directories)
+				console.log("Directory created:", userDir);
+			} catch (error) {
+				console.error("Error creating directory:", error);
+				return res.status(500).json({ message: 'Failed to create directory' });
+			}
+		} else {
+			console.log("Directory already exists:", userDir);
 		}
-		console.log('Email sent:', info.response);
-		res.status(200).send('Email sent successfully.');
-	});
+		
+		// Prepare the data object to save
+		const data = {
+			user_name: user_name,
+			email: email,
+			time_stamp: time_stamp,
+			task: task,
+			notes: notes
+		};
+		
+		// Write the data to the specified file
+		fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+		console.log("Data written to file:", filePath);
+		res.status(200).json({ message: 'Data saved successfully' });
+
+	} catch (error) {
+		console.error("Error saving data:", error);
+		res.status(500).json({ message: 'Failed to save data' });
+	}
+	res.status(200).send("Data saved successfully");
 });
 
+// Serve HTML files based on mode query parameter
 app.get('/', (req, res) => {
 	const mode = req.query.mode;
+
+	// Dynamically serve different HTML files based on the mode
 	if (mode === 'task1_pretask') {
 		res.sendFile(join(__dirname, 'index_task1_pretask.html'));
 	} else if (mode === 'task1_prompt_pretask') {
@@ -120,11 +91,17 @@ app.get('/', (req, res) => {
 		res.sendFile(join(__dirname, 'index_send.html'));
 	}
 });
+
+// Socket.IO connection event for real-time communication
 io.on('connection', (socket) => {
+	// Listen for 'chat message' event from clients
 	socket.on('chat message', (msg, num) => {
+		// Broadcast the message and sender ID to all connected clients
 		io.emit('chat message', { text: msg, senderId: socket.id }, num);
 	});
 });
+
+// Start the server on port 3000
 server.listen(3000, '0.0.0.0', () => {
 	console.log('server running at http://localhost:3000');
 });
